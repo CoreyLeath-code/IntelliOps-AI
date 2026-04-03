@@ -30,3 +30,72 @@ spec:
     - port: 8001
       targetPort: 8001
   type: ClusterIP
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-api
+  template:
+    metadata:
+      labels:
+        app: go-api
+    spec:
+      containers:
+        - name: go-api
+          image: intelliops-go-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MODEL_SERVICE_URL
+              value: "http://ml-model:8001/predict"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-api
+spec:
+  selector:
+    app: go-api
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+  apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dashboard
+  template:
+    metadata:
+      labels:
+        app: dashboard
+    spec:
+      containers:
+        - name: dashboard
+          image: intelliops-dashboard:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard
+spec:
+  selector:
+    app: dashboard
+  ports:
+    - port: 80
+      targetPort: 80
+  type: LoadBalancer
