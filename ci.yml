@@ -10,13 +10,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # 🐍 Python
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: "3.11"
 
       - name: Install Python deps
         run: |
@@ -28,9 +28,9 @@ jobs:
 
       # 🟦 Go
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
-          go-version: 1.22
+          go-version: "1.22"
 
       - name: Run Go tests
         run: |
@@ -39,4 +39,4 @@ jobs:
 
       # 🐳 Docker Build Check
       - name: Build Docker images
-        run: docker-compose build
+        run: docker compose build
