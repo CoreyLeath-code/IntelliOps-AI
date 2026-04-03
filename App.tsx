@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 
+interface PredictionResult {
+  prediction: number | number[];
+}
+
 function App() {
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<PredictionResult | null>(null);
 
   const sendRequest = async () => {
     const res = await fetch("http://localhost:8080/predict", {
@@ -14,7 +18,7 @@ function App() {
       }),
     });
 
-    const data = await res.json();
+    const data: PredictionResult = await res.json();
     setResult(data);
   };
 
