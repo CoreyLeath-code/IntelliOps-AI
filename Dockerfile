@@ -1,12 +1,18 @@
-FROM python:3.11-slim
+FROM golang:1.22 AS builder
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY go.mod go.sum ./
+RUN go mod download
 
 COPY . .
+RUN go build -o prediction-api main.go
 
-EXPOSE 8001
+FROM debian:bookworm-slim
 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8001"]
+WORKDIR /app
+COPY --from=builder /app/prediction-api .
+
+EXPOSE 8080
+
+CMD ["./prediction-api"]
