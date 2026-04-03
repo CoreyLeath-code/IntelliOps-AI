@@ -1,0 +1,11 @@
+mlModel:
+  image: intelliops-ml-model:latest
+  replicaCount: 1
+
+goApi:
+  image: intelliops-go-api:latest
+  replicaCount: 1
+
+dashboard:
+  image: intelliops-dashboard:latest
+  replicaCount: 1
