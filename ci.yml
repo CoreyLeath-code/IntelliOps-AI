@@ -1,0 +1,42 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 🐍 Python
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install Python deps
+        run: |
+          pip install -r services/ml-model-pytorch/requirements.txt
+          pip install pytest
+
+      - name: Run Python tests
+        run: pytest services/ml-model-pytorch/
+
+      # 🟦 Go
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.22
+
+      - name: Run Go tests
+        run: |
+          cd services/prediction-api-go
+          go test ./...
+
+      # 🐳 Docker Build Check
+      - name: Build Docker images
+        run: docker-compose build
