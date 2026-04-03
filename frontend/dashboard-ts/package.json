@@ -1,0 +1,11 @@
+{
+  "name": "intelliops-dashboard",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "npx esbuild src/main.ts --bundle --outfile=dist/main.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0",
+    "typescript": "^5.0.0"
+  }
+}
