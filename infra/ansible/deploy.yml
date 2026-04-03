@@ -1,0 +1,19 @@
+- name: Deploy IntelliOps AI locally
+  hosts: local
+  become: false
+  tasks:
+    - name: Build Docker images
+      shell: docker-compose build
+      args:
+        chdir: "{{ playbook_dir }}/../.."
+
+    - name: Start Docker services
+      shell: docker-compose up -d
+      args:
+        chdir: "{{ playbook_dir }}/../.."
+
+    - name: Apply Kubernetes manifests
+      shell: kubectl apply -f infra/kubernetes/
+      args:
+        chdir: "{{ playbook_dir }}/../.."
+      ignore_errors: true
