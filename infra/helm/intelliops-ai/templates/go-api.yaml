@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-api
+spec:
+  replicas: {{ .Values.goApi.replicaCount }}
+  selector:
+    matchLabels:
+      app: go-api
+  template:
+    metadata:
+      labels:
+        app: go-api
+    spec:
+      containers:
+        - name: go-api
+          image: {{ .Values.goApi.image }}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MODEL_SERVICE_URL
+              value: "http://ml-model:8001/predict"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-api
+spec:
+  selector:
+    app: go-api
+  ports:
+    - port: 8080
+      targetPort: 8080
