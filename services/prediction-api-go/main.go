@@ -21,32 +21,35 @@ func init() {
 	prometheus.MustRegister(requestCounter)
 }
 
-type Request struct {
+// PredictRequest is the JSON body expected by /predict.
+type PredictRequest struct {
 	Features []float64 `json:"features"`
 }
 
-func main() {
-	modelURL := os.Getenv("MODEL_SERVICE_URL")
-	if modelURL == "" {
-		modelURL = "http://ml-model:8001/predict"
-	}
+// healthHandler responds with a simple "ok" status.
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("ok"))
+}
 
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("ok"))
-	})
-
-	http.HandleFunc("/predict", func(w http.ResponseWriter, r *http.Request) {
+// makePredictHandler returns an http.HandlerFunc that proxies prediction
+// requests to the downstream model service at modelURL.
+func makePredictHandler(modelURL string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		requestCounter.Inc()
 
-		var req Request
-		json.NewDecoder(r.Body).Decode(&req)
+		var req PredictRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "invalid request body", http.StatusBadRequest)
+			return
+		}
 
 		payload, _ := json.Marshal(req)
 
 		resp, err := http.Post(modelURL, "application/json", bytes.NewBuffer(payload))
 		if err != nil {
-			http.Error(w, "model service unavailable", 500)
+			http.Error(w, "model service unavailable", http.StatusServiceUnavailable)
 			return
 		}
 		defer resp.Body.Close()
@@ -57,9 +60,19 @@ func main() {
 		latency := time.Since(start).Milliseconds()
 		log.Printf("latency=%dms", latency)
 
+		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(result)
-	})
+	}
+}
 
+func main() {
+	modelURL := os.Getenv("MODEL_SERVICE_URL")
+	if modelURL == "" {
+		modelURL = "http://ml-model:8001/predict"
+	}
+
+	http.HandleFunc("/health", healthHandler)
+	http.HandleFunc("/predict", makePredictHandler(modelURL))
 	http.Handle("/metrics", promhttp.Handler())
 
 	log.Println("API listening on :8080")

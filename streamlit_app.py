@@ -1,6 +1,10 @@
-import streamlit as st
-import requests
+import os
+
 import pandas as pd
+import requests
+import streamlit as st
+
+API_URL = os.environ.get("API_URL", "http://localhost:8080")
 
 st.title("📊 IntelliOps AI Dashboard")
 
@@ -17,7 +21,7 @@ if "prediction_label" not in st.session_state:
 
 if st.button("Predict"):
     response = requests.post(
-        "http://localhost:8080/predict",
+        f"{API_URL}/predict",
         json={"features": [f1, f2, f3, f4]},
     )
     result = response.json()
