@@ -15,6 +15,7 @@ mlruns/
 *.exe
 *.test
 vendor/
+services/prediction-api-go/prediction-api-go
 
 # Node / frontend
 node_modules/
