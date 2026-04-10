@@ -26,7 +26,12 @@
 
 ![Stars](https://img.shields.io/github/stars/Trojan3877/IntelliOps-AI?style=social)
 ![Forks](https://img.shields.io/github/forks/Trojan3877/IntelliOps-AI?style=social)
-
+![MLOps](https://img.shields.io/badge/MLOps-End--to--End-blue)
+![Real-Time](https://img.shields.io/badge/Real--Time-Inference-green)
+![Observability](https://img.shields.io/badge/Observability-Enabled-orange)
+![Microservices](https://img.shields.io/badge/Architecture-Microservices-black)
+![Scalable](https://img.shields.io/badge/Scale-Horizontal-blue)
+![Latency](https://img.shields.io/badge/Latency-Low-critical)
 
 
 <img width="1402" height="1121" alt="image" src="https://github.com/user-attachments/assets/43c1bd82-9414-4ee4-9cf9-9a0f8c081ea8" />
