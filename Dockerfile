@@ -1,7 +1,7 @@
 # Root Dockerfile — builds the Go metrics/API binary.
 # Each service also has its own Dockerfile under services/ and frontend/.
 
-FROM golang:1.22 AS builder
+FROM golang:1.24 AS builder
 
 WORKDIR /app
 
