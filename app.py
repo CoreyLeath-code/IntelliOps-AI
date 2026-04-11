@@ -24,6 +24,11 @@ class PredictionResponse(BaseModel):
     prediction: Any
 
 
+@app.get("/health")
+def health() -> dict:
+    return {"status": "ok", "service": "intelliops-ml"}
+
+
 @app.get("/")
 def root() -> dict:
     return {"message": "ML Model Service Running"}
