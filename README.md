@@ -2,20 +2,36 @@
 
 
 
-🚀 IntelliOps AI — Real-Time ML Monitoring Platform
-![CI](https://img.shields.io/github/actions/workflow/status/Trojan3877/intelliops-ai/ci.yml?branch=main&label=CI%2FCD&style=for-the-badge)
-![Go](https://img.shields.io/badge/Backend-Go-00ADD8?style=for-the-badge&logo=go)
-![TypeScript](https://img.shields.io/badge/Frontend-TypeScript-3178C6?style=for-the-badge&logo=typescript)
-![PyTorch](https://img.shields.io/badge/ML-PyTorch-EE4C2C?style=for-the-badge&logo=pytorch)
-![MLflow](https://img.shields.io/badge/Tracking-MLflow-0194E2?style=for-the-badge)
-![Docker](https://img.shields.io/badge/Container-Docker-2496ED?style=for-the-badge&logo=docker)
-![Kubernetes](https://img.shields.io/badge/Orchestration-Kubernetes-326CE5?style=for-the-badge&logo=kubernetes)
-![Grafana](https://img.shields.io/badge/Monitoring-Grafana-F46800?style=for-the-badge&logo=grafana)
-![Streamlit](https://img.shields.io/badge/UI-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit)
-![Prometheus](https://img.shields.io/badge/Metrics-Prometheus-E6522C?style=for-the-badge&logo=prometheus)
-![Helm](https://img.shields.io/badge/Helm-Charts-0F1689?style=for-the-badge&logo=helm)
-![Ansible](https://img.shields.io/badge/Automation-Ansible-EE0000?style=for-the-badge&logo=ansible)
+ IntelliOps-AI — Real-Time ML Monitoring Platform
 
+![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
+![TypeScript](https://img.shields.io/badge/TypeScript-Enabled-blue?logo=typescript)
+![Go](https://img.shields.io/badge/Go-Enabled-blue?logo=go)
+
+![Docker](https://img.shields.io/badge/Docker-Containerized-blue?logo=docker)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-Orchestrated-blue?logo=kubernetes)
+![Helm](https://img.shields.io/badge/Helm-Charts-blue?logo=helm)
+
+![MLflow](https://img.shields.io/badge/MLflow-Tracking-blue)
+![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red?logo=streamlit)
+![Grafana](https://img.shields.io/badge/Grafana-Monitoring-orange?logo=grafana)
+
+![CI/CD](https://img.shields.io/badge/CI/CD-GitHub%20Actions-black?logo=githubactions)
+![Terraform](https://img.shields.io/badge/Terraform-Infrastructure-purple?logo=terraform)
+![Ansible](https://img.shields.io/badge/Ansible-Automation-red?logo=ansible)
+
+![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen)
+![Build](https://img.shields.io/github/actions/workflow/status/Trojan3877/IntelliOps-AI/ci.yml)
+
+![Stars](https://img.shields.io/github/stars/Trojan3877/IntelliOps-AI?style=social)
+![Forks](https://img.shields.io/github/forks/Trojan3877/IntelliOps-AI?style=social)
+![MLOps](https://img.shields.io/badge/MLOps-End--to--End-blue)
+![Real-Time](https://img.shields.io/badge/Real--Time-Inference-green)
+![Observability](https://img.shields.io/badge/Observability-Enabled-orange)
+![Microservices](https://img.shields.io/badge/Architecture-Microservices-black)
+![Scalable](https://img.shields.io/badge/Scale-Horizontal-blue)
+![Latency](https://img.shields.io/badge/Latency-Low-critical)
 
 
 <img width="1402" height="1121" alt="image" src="https://github.com/user-attachments/assets/43c1bd82-9414-4ee4-9cf9-9a0f8c081ea8" />

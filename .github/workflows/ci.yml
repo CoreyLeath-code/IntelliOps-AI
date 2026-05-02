@@ -1,18 +1,59 @@
 name: CI
-on: [push]
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
 jobs:
-  build:
+  python-tests:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install fastapi uvicorn torch scikit-learn pytest
-      - run: pytest || true
+
+      - name: Install Python dependencies
+        run: pip install --no-cache-dir -r services/ml-model-pytorch/requirements.txt pytest httpx
+
+      - name: Run Python tests
+        working-directory: services/ml-model-pytorch
+        run: pytest -v
+
+  go-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
-      - run: go test ./... || true
+          go-version: '1.24'
+
+      - name: Run Go tests
+        working-directory: services/prediction-api-go
+        run: go test -v ./...
+
+  docker-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build ML model image
+        run: docker build -t intelliops-ml-model services/ml-model-pytorch
+
+      - name: Build Go API image
+        run: docker build -t intelliops-go-api services/prediction-api-go
+
+      - name: Build dashboard image
+        run: docker build -t intelliops-dashboard frontend/dashboard-ts

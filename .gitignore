@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.env
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+mlruns/
+
+# Go
+*.exe
+*.test
+vendor/
+services/prediction-api-go/prediction-api-go
+
+# Node / frontend
+node_modules/
+frontend/dashboard-ts/dist/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp

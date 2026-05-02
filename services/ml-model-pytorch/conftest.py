@@ -1,5 +1,6 @@
 import os
 import sys
 
-# Allow importing 'model' from the repository root
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
+# Ensure the service directory itself is on sys.path so that 'model' resolves
+# to services/ml-model-pytorch/model.py (not a stale root-level stub).
+sys.path.insert(0, os.path.dirname(__file__))
