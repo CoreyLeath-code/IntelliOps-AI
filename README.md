@@ -46,6 +46,49 @@ Experiment tracking
 Observability + monitoring
 Scalable microservices architecture
 
+[ METRIC SOURCES / K8S CLUSTERS ]             [ CLOUD APPLICATION RUNTIMES ]
+                       │                                            │
+          (Streaming Prometheus Metrics)                (High-Volume JSON Logs)
+                       │                                            │
+                       ▼                                            ▼
+           [ INTELLIOPS AGENT MESH ]                    [ HIGH-THROUGHPUT API GATEWAY ]
+          (Vector / OpenTelemetry Core)                    (Nginx Reverse Proxy Layer)
+                       │                                            │
+                       └──────────────────────┬─────────────────────┘
+                                              │
+                              (Distributed Streaming Payload)
+                                              │
+                                              ▼
+                             [ APACHE KAFKA INGESTION BUS ]
+               ┌─────────────────────────────────────────────────────────┐
+               │ • Topic: 'telemetry-stream-raw' [12 Partitions]         │
+               │ • High-Velocity Memory Buffer Buffer Layer              │
+               └──────────────────────────────┬──────────────────────────┘
+                                              │
+                                (Decoupled Microservice Bus)
+                                              │
+                                              ▼
+                             [ LOGSIGHT-AI STREAM EVALUATOR ]
+               ┌─────────────────────────────────────────────────────────┐
+               │ • Isolated Horizon Window Feature Store Aggregation     │
+               │ • Dynamic Anomaly Isolation Vector Extraction           │
+               └──────────────────────────────┬──────────────────────────┘
+                                              │
+                                  (Constructed Feature Vectors)
+                                              │
+                                              ▼
+                             [ ML-DOCKER INFERENCE SERVING CORE ]
+               ┌─────────────────────────────────────────────────────────┐
+               │ • Quantized Sequence Scoring Models (TensorRT/ONNX)      │
+               │ • Real-Time Failure Likelihood Profiling                 │
+               └──────────────────────────────┬──────────────────────────┘
+                                              │
+                                 (Root-Cause Probability Arrays)
+                                              │
+                                              ▼
+                              [ AUTOMATED MITIGATION DISPATCH ]
+               (PagerDuty Webhooks -> AutoHealing Runbooks -> Grafana Mesh Alerts)
+
 The system is designed to demonstrate end-to-end ML engineering capability, not just modeling.
 
 🏗️ System Architecture
