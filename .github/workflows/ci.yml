@@ -47,7 +47,7 @@ jobs:
             --junitxml=pytest-results.xml
       - name: Upload Python reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: python-${{ matrix.python-version }}-reports
           path: |
@@ -76,7 +76,7 @@ jobs:
       - name: Build
         run: go build ./...
       - name: Upload Go coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: go-coverage
           path: services/prediction-api-go/coverage.out
