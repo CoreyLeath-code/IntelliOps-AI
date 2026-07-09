@@ -1,54 +1,111 @@
-name: CI
+name: IntelliOps Enterprise CI
 
 on:
   push:
-    branches: ["main", "copilot/**"]
+    branches: [main, development]
   pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: intelliops-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  lint-and-test:
+  python-quality:
+    name: Python Quality & Tests (${{ matrix.python-version }})
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11"]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: ${{ runner.os }}-pip-
-
-      # Provision routing, metrics compilation, parsing frameworks, and test runners early
+          python-version: ${{ matrix.python-version }}
+          cache: pip
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 black mypy bandit pytest fastapi httpx prometheus_client pydantic-settings redis aiokafka numpy
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-      - name: Lint (flake8)
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+      - name: Validate syntax
+        run: python -m compileall -q services/ml-model-pytorch
+      - name: Run Ruff correctness checks
+        run: ruff check services/ml-model-pytorch --select E9,F63,F7,F82
+      - name: Run model tests with coverage
+        working-directory: services/ml-model-pytorch
         run: |
-          flake8 app/ src/ tests/ --max-line-length=100 || echo "Static style warnings bypassed."
+          pytest test_model.py -v \
+            --cov=. \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml \
+            --junitxml=pytest-results.xml
+      - name: Upload Python reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-${{ matrix.python-version }}-reports
+          path: |
+            services/ml-model-pytorch/coverage.xml
+            services/ml-model-pytorch/pytest-results.xml
+          if-no-files-found: warn
 
-      - name: Format check (black)
-        run: |
-          black --check app/ src/ tests/ --line-length=100 || echo "Formatting differences bypassed."
+  go-quality:
+    name: Go Build, Vet & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/prediction-api-go
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: services/prediction-api-go/go.mod
+          cache-dependency-path: services/prediction-api-go/go.sum
+      - name: Verify formatting
+        run: test -z "$(gofmt -l .)"
+      - name: Vet
+        run: go vet ./...
+      - name: Test
+        run: go test ./... -race -coverprofile=coverage.out
+      - name: Build
+        run: go build ./...
+      - name: Upload Go coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-coverage
+          path: services/prediction-api-go/coverage.out
+          if-no-files-found: warn
 
-      - name: Type check (mypy)
-        run: |
-          mypy app/ src/ --ignore-missing-imports || echo "Type anomalies bypassed."
+  compose-validation:
+    name: Compose & Container Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Compose configuration
+        run: docker compose config --quiet
+      - name: Build application services
+        run: docker compose build ml-model go-api dashboard
 
-      - name: Run tests
+  release-readiness:
+    name: Release Readiness Contract
+    needs: [python-quality, go-quality, compose-validation]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify operational metadata
         run: |
-          if [ -d tests ]; then
-            pytest -v --tb=short --collect-only || echo "Verification pass completed successfully."
-          else
-            echo "No test assets discovered."
-          fi
+          test -f README.md
+          test -f LICENSE
+          test -f SECURITY.md
+          test -f CONTRIBUTING.md
+          test -f CHANGELOG.md
+          test -f docker-compose.yml
+          test -f .github/dependabot.yml
+          test -f docs/L6_DEPLOYMENT_HYGIENE.md
+          echo "IntelliOps-AI release-readiness contract passed."
