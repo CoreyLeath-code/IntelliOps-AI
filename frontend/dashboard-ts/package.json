@@ -5,7 +5,7 @@
     "build": "npx esbuild src/main.ts --bundle --outfile=dist/main.js"
   },
   "devDependencies": {
-    "esbuild": "^0.20.0",
+    "esbuild": "^0.28.1",
     "typescript": "^5.0.0"
   }
 }
