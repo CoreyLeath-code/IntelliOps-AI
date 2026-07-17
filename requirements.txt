@@ -1,6 +1,6 @@
 fastapi==0.115.6
 uvicorn[standard]==0.32.1
-torch==2.6.0
+torch==2.13.0
 mlflow==3.9.0
 scikit-learn==1.5.2
 matplotlib==3.9.3
