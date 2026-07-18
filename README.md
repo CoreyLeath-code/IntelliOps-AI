@@ -2,8 +2,12 @@
 
 
 
- IntelliOps-AI — Real-Time ML Monitoring Platform
+# IntelliOps-AI — Real-Time ML Monitoring Platform
 [![IntelliOps Enterprise CI](https://github.com/CoreyLeath-code/IntelliOps-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/CoreyLeath-code/IntelliOps-AI/actions/workflows/ci.yml)
+[![Research Benchmarks](https://github.com/CoreyLeath-code/IntelliOps-AI/actions/workflows/benchmarks.yml/badge.svg)](https://github.com/CoreyLeath-code/IntelliOps-AI/actions/workflows/benchmarks.yml)
+[![Warm P95](https://img.shields.io/badge/warm%20P95-79.733%20%C2%B5s-6f42c1)](benchmarks/benchmark_report.md)
+[![Throughput](https://img.shields.io/badge/throughput-15.5k%20inference%2Fs-2ea44f)](benchmarks/benchmark_report.md)
+[![Benchmark Evidence](https://img.shields.io/badge/benchmark-seeded%20%2B%20versioned-blue)](benchmarks/latest.json)
 [![Security & Supply Chain](https://github.com/CoreyLeath-code/IntelliOps-AI/actions/workflows/security.yml/badge.svg)](https://github.com/CoreyLeath-code/IntelliOps-AI/actions/workflows/security.yml)
 [![Release](https://github.com/CoreyLeath-code/IntelliOps-AI/actions/workflows/release.yml/badge.svg)](https://github.com/CoreyLeath-code/IntelliOps-AI/actions/workflows/release.yml)
 ![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11-3776AB?logo=python&logoColor=white)
@@ -148,14 +152,45 @@ GitHub Actions (CI/CD)
 ✅ Kubernetes + Helm deployment
 ✅ Automated CI/CD pipeline
 ✅ Unit testing (Go + Python)
-📊 Performance Metrics
-Category	Metric	Value
-Model	Accuracy	93%
-Model	Precision	90%
-Model	Recall	91%
-System	Latency	~45ms
-System	Throughput	~850 req/sec
-API	Response Time	<100ms
+## 📊 Research Metrics & Benchmarks
+
+The baseline below was produced by [the versioned benchmark harness](benchmarks/run_benchmark.py) in GitHub Actions. It measures the real PyTorch model service on a single CPU process; it does not include HTTP, the Go gateway, containers, network, or concurrent clients. Full protocol and limitations: [benchmark report](benchmarks/benchmark_report.md). Raw evidence: [latest JSON](benchmarks/latest.json).
+
+### Reproducible performance baseline
+
+| Metric | Measured value | Scope |
+|---|---:|---|
+| Lazy-training cold start | 6,153.593 ms | First `predict`, including 100 training epochs |
+| Warm mean / median | 58.454 / 55.383 µs | 2,000 predictions after 100 warm-ups |
+| Warm P95 / P99 | 79.733 / 107.213 µs | Single-sample CPU inference |
+| Warm min / max | 49.943 / 167.072 µs | Observed range |
+| Throughput | 15,514.45 inference/s | Sequential single-process loop |
+| Peak Python allocations | 62.011 MiB | `tracemalloc` |
+| Process maximum RSS | 693.352 MiB | Includes runtime and ML libraries |
+| Environment | Python 3.11.15 · PyTorch 2.6.0 · Linux · 4 CPUs | GitHub-hosted runner |
+| Benchmark date | 2026-07-18 | Seed `20260718` |
+
+### Model-quality sanity check
+
+| Metric | Value |
+|---|---:|
+| Accuracy | 1.000 |
+| Precision | 1.000 |
+| Recall | 1.000 |
+| F1 | 1.000 |
+| Confusion matrix | TP 50 · TN 100 · FP 0 · FN 0 |
+
+> **Evidence boundary:** the service lazily trains on all 150 Iris rows and the sanity check evaluates those same rows. These quality values verify deterministic pipeline behavior; they are not held-out accuracy or a production generalization claim.
+
+### Reproduce
+
+```bash
+pip install -r requirements.txt
+python benchmarks/run_benchmark.py --output benchmarks/latest.json
+```
+
+CI reruns this protocol for every pull request, validates the result contract and F1 floor, publishes a job summary, and retains the raw artifact for 30 days. On comparable runners, median or P95 regressions above 15% require investigation and a documented baseline update.
+
 🧪 Testing & Validation
 Go API Tests
 go test ./...
@@ -169,7 +204,7 @@ Go API tests
 Docker builds
 ⚡ Quick Start
 1. Clone Repo
-git clone https://github.com/Trojan3877/intelliops-ai.git
+git clone https://github.com/CoreyLeath-code/IntelliOps-AI.git
 cd intelliops-ai
 2. Run Locally
 docker-compose up --build

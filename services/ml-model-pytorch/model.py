@@ -26,7 +26,7 @@ def _train_if_needed() -> nn.Module:
 
     data = load_iris()
     X = torch.tensor(data.data, dtype=torch.float32)
-    y = torch.tensor((data.target == 0).astype(float)).view(-1, 1)
+    y = torch.tensor((data.target == 0).astype(float), dtype=torch.float32).view(-1, 1)
 
     model = Model()
     optimizer = optim.Adam(model.parameters(), lr=0.01)
