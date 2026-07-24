@@ -200,8 +200,6 @@ The intended use, excluded use, data/credential handling, model or algorithm lim
 Use the linked production-readiness issue for this repository as the checklist. Resolve missing tests, deployment instructions, observability, supply-chain controls, and release evidence before attaching a production claim.
 
 
-## 📊 Research Metrics & Benchmarks
-
 The baseline below was produced by [the versioned benchmark harness](benchmarks/run_benchmark.py) in GitHub Actions. It measures the real PyTorch model service on a single CPU process; it does not include HTTP, the Go gateway, containers, network, or concurrent clients. Full protocol and limitations: [benchmark report](benchmarks/benchmark_report.md). Raw evidence: [latest JSON](benchmarks/latest.json).
 
 ### Reproducible performance baseline
