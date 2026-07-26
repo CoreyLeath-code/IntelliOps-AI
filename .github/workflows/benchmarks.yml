@@ -1,0 +1,72 @@
+name: IntelliOps Research Benchmarks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: intelliops-benchmark-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  model-benchmark:
+    name: PyTorch Model Research Benchmark
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install benchmark runtime
+        run: pip install -r requirements.txt
+      - name: Run seeded benchmark
+        run: |
+          python benchmarks/run_benchmark.py \
+            --iterations 2000 \
+            --warmup 100 \
+            --output benchmark-results.json
+      - name: Validate evidence contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          result = json.loads(Path("benchmark-results.json").read_text())
+          required = {"cold_start_ms", "warm_latency_us", "throughput_inferences_s", "memory", "quality"}
+          missing = required - result.keys()
+          if missing:
+              raise SystemExit(f"missing benchmark fields: {sorted(missing)}")
+          if result["warm_latency_us"]["p99"] <= 0 or result["throughput_inferences_s"] <= 0:
+              raise SystemExit("invalid benchmark performance values")
+          if result["quality"]["f1"] < 0.90:
+              raise SystemExit("model sanity-check F1 regressed below 0.90")
+          PY
+      - name: Publish benchmark summary
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          r = json.load(open("benchmark-results.json"))
+          print("## IntelliOps model benchmark")
+          print("| Metric | Value |")
+          print("|---|---:|")
+          print(f"| Cold start | {r['cold_start_ms']:.3f} ms |")
+          print(f"| Warm median | {r['warm_latency_us']['median']:.3f} µs |")
+          print(f"| Warm p95 | {r['warm_latency_us']['p95']:.3f} µs |")
+          print(f"| Warm p99 | {r['warm_latency_us']['p99']:.3f} µs |")
+          print(f"| Throughput | {r['throughput_inferences_s']:.2f} inference/s |")
+          print(f"| Max RSS | {r['memory']['process_max_rss_mib']:.2f} MiB |")
+          print(f"| Accuracy / F1 | {r['quality']['accuracy']:.3f} / {r['quality']['f1']:.3f} |")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: intelliops-benchmark-${{ github.sha }}
+          path: benchmark-results.json
+          if-no-files-found: error
+          retention-days: 30

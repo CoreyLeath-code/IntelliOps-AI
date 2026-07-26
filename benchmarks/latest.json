@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "benchmark": "intelliops-pytorch-model-service",
+  "generated_at": "2026-07-18T20:43:06.704620+00:00",
+  "seed": 20260718,
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Linux-6.17.0-1020-azure-x86_64-with-glibc2.39",
+    "torch": "2.6.0+cu124",
+    "device": "cpu",
+    "cpu_count": 4
+  },
+  "protocol": {
+    "iterations": 2000,
+    "warmup": 100,
+    "dataset": "scikit-learn Iris",
+    "evaluation_scope": "training-corpus sanity check"
+  },
+  "cold_start_ms": 6153.592651,
+  "first_score": 0.7423015832901001,
+  "warm_latency_us": {
+    "mean": 58.454244,
+    "median": 55.383,
+    "p95": 79.7325,
+    "p99": 107.2131,
+    "min": 49.943,
+    "max": 167.072
+  },
+  "throughput_inferences_s": 15514.452134932511,
+  "memory": {
+    "peak_python_tracemalloc_mib": 62.01050281524658,
+    "process_max_rss_mib": 693.3515625
+  },
+  "quality": {
+    "accuracy": 1,
+    "precision": 1,
+    "recall": 1,
+    "f1": 1,
+    "confusion_matrix": {
+      "tp": 50,
+      "tn": 100,
+      "fp": 0,
+      "fn": 0
+    }
+  },
+  "limitations": [
+    "Quality is evaluated on the same Iris corpus used by the service's lazy training path; it is a sanity check, not held-out accuracy.",
+    "Single-process CPU inference excludes HTTP, Go gateway, container, network, GPU, and concurrent-load overhead.",
+    "Maximum RSS includes the Python runtime and imported PyTorch/scikit-learn libraries."
+  ]
+}
