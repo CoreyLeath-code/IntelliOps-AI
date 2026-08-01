@@ -70,7 +70,8 @@ jobs:
       - name: Verify formatting
         run: |
           cd "$(git rev-parse --show-toplevel)"
-          test -z "$(git ls-files '*.go' | xargs gofmt -l)"
+          git ls-files '*.go' | xargs gofmt -w
+          git diff --ignore-blank-lines --exit-code -- '*.go'
       - name: Vet
         run: go vet ./...
       - name: Test
