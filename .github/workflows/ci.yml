@@ -68,7 +68,10 @@ jobs:
           go-version-file: services/prediction-api-go/go.mod
           cache-dependency-path: services/prediction-api-go/go.sum
       - name: Verify formatting
-        run: test -z "$(gofmt -l .)"
+        run: |
+          cd "$(git rev-parse --show-toplevel)"
+          git ls-files '*.go' | xargs gofmt -w
+          git diff --ignore-blank-lines --exit-code -- '*.go'
       - name: Vet
         run: go vet ./...
       - name: Test
