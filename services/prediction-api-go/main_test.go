@@ -139,4 +139,3 @@ func TestPredictHandlerMapsTimeoutToServiceUnavailable(t *testing.T) {
 		t.Fatalf("expected status 503, got %d", w.Code)
 	}
 }
-
