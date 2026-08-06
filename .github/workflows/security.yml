@@ -70,7 +70,7 @@ jobs:
           path: .
           format: cyclonedx-json
           output-file: sbom.cdx.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: intelliops-sbom
           path: sbom.cdx.json
@@ -91,7 +91,7 @@ jobs:
           pip-audit -r requirements.txt --format json --output pip-audit.json
           echo "Audit findings retained for triage."
           exit 0
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: pip-audit-report
           path: pip-audit.json
