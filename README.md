@@ -203,8 +203,6 @@ Tags matching `v*.*.*` trigger `.github/workflows/release.yml`. The workflow:
 
 Release publication is therefore tag-driven. CI/security/benchmark workflows remain separate evidence and should be green before a release tag is cut.
 
-## L6-style design review
-
 ### What is strong
 
 - The gateway now owns input/output contracts instead of treating the model service as trusted input.
