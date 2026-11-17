@@ -11,4 +11,6 @@ requests==2.34.2
 # Preserve Python 3.10 test compatibility while verifying Pandas 3 on 3.11+.
 pandas==2.2.3; python_version < "3.11"
 pandas==3.1.1; python_version >= "3.11"
-numpy==1.26.4
+# Pandas 3 requires NumPy 2; retain NumPy 1.26 on Python 3.10.
+numpy==1.26.4; python_version < "3.11"
+numpy==2.4.6; python_version >= "3.11"
