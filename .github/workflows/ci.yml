@@ -33,6 +33,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
+      - name: Check Python-specific pandas and Streamlit dependency versions
+        run: |
+          python - <<'PY'
+          import sys
+          import pandas
+          import streamlit
+          modern = sys.version_info >= (3, 11)
+          expected_pandas = "3.1.1" if modern else "2.2.3"
+          expected_streamlit = "1.67.0" if modern else "1.65.0"
+          assert pandas.__version__ == expected_pandas, pandas.__version__
+          assert streamlit.__version__ == expected_streamlit, streamlit.__version__
+          print(f"Verified pandas {pandas.__version__}, Streamlit {streamlit.__version__}")
+          PY
       - name: Validate syntax
         run: python -m compileall -q services/ml-model-pytorch
       - name: Run Ruff correctness checks
